@@ -2,11 +2,22 @@ package com.semantyca.ess;
 
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.client.Client;
 import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +29,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @ShellComponent
 public class ShellCommandHandler {
@@ -47,6 +64,33 @@ public class ShellCommandHandler {
             updateRequest.doc(data, XContentType.JSON);
             updateRequest.upsert(indexRequest);
             esClientFactory.get().update(updateRequest, RequestOptions.DEFAULT);
+
+        } catch (ElasticsearchException | IOException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return "done";
+    }
+
+    @ShellMethod("do data request")
+    public String getdata() {
+
+        try {
+            QueryBuilder qb = QueryBuilders.matchAllQuery();
+
+            String order = "addressLine2", indexName= "gp";
+            SearchRequest searchRequest = new SearchRequest(indexName);
+            SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+            sourceBuilder.sort(SortBuilders.fieldSort(order + ".keyword").order(SortOrder.ASC)).query(QueryBuilders.matchAllQuery());
+            searchRequest.source(sourceBuilder);
+            SearchResponse searchResponse = esClientFactory.get().search(searchRequest, RequestOptions.DEFAULT);
+            SearchHits hits = searchResponse.getHits();
+            List<Map<String, Object>> resultAsListOfMaps = Arrays.stream(hits.getHits()).map(x -> x.getSourceAsMap()).collect(Collectors.toList());
+            String result = resultAsListOfMaps.get(0).keySet() + "\n";
+            result += "---------------------------------------------";
+            for (Map map : resultAsListOfMaps){
+                result += map.values() + "\n";
+            }
+            return result;
 
         } catch (ElasticsearchException | IOException e) {
             LOG.error(e.getMessage(), e);
