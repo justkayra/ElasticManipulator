@@ -1,6 +1,7 @@
 package com.semantyca.ess.store.model;
 
-import com.boots.dataimport.domain.store.BooleanAdapter;
+
+import com.semantyca.ess.store.BooleanAdapter;
 
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;

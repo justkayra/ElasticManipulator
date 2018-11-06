@@ -1,9 +1,9 @@
 package com.semantyca.ess.store.model;
 
 
-import com.boots.dataimport.domain.ImportedDataRow;
-import com.boots.dataimport.domain.store.BooleanAdapter;
-import com.boots.dataimport.domain.store.LocalDateAdapter;
+
+import com.semantyca.ess.store.BooleanAdapter;
+import com.semantyca.ess.store.LocalDateAdapter;
 
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -11,7 +11,7 @@ import java.time.LocalDate;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Location")
-public class Location implements ImportedDataRow {
+public class Location  {
     @XmlAttribute(name = "id")
     private String id;
     @XmlElement(name = "Name")
@@ -79,8 +79,6 @@ public class Location implements ImportedDataRow {
     @XmlElement(name = "Manager")
     private Manager manager;
 
-
-    @Override
     public String getId() {
         return id;
     }

@@ -1,8 +1,8 @@
 package com.semantyca.ess.store.model;
 
-import com.boots.dataimport.domain.store.BooleanAdapter;
-import com.boots.dataimport.domain.store.LocalTimeAdapter;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+import com.semantyca.ess.store.BooleanAdapter;
+import com.semantyca.ess.store.LocalTimeAdapter;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -13,7 +13,7 @@ import java.time.LocalTime;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Pharmacy")
-@JsonPropertyOrder({"closed", "openTime", "closeTime"})
+
 public class Pharmacy {
     @XmlElement(name="Closed")
     @XmlJavaTypeAdapter(value = BooleanAdapter.class)
