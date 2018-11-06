@@ -29,7 +29,7 @@ public class Location  {
     @XmlElement(name = "Hierarchy")
     private Hierarchy hierarchyObject;
     @XmlElement(name = "Address")
-    private Address addressObject;
+    private Address address;
     @XmlElement(name = "ContactDetails")
     private ContactDetails contactDetailsObject;
     @XmlElement(name = "OpenDate")
@@ -139,12 +139,12 @@ public class Location  {
         this.hierarchyObject = hierarchyObject;
     }
 
-    public Address getAddressObject() {
-        return addressObject;
+    public Address getAddress() {
+        return address;
     }
 
-    public void setAddressObject(Address addressObject) {
-        this.addressObject = addressObject;
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public ContactDetails getContactDetailsObject() {

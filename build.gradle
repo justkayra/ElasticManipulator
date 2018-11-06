@@ -26,11 +26,18 @@ repositories {
 
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter')
+
     compile group: 'org.elasticsearch.client', name: 'elasticsearch-rest-high-level-client', version: '6.4.0'
     compile group: 'org.elasticsearch.client', name: 'transport', version: '6.4.1'
     compile group: 'org.elasticsearch', name: 'elasticsearch', version: '6.4.1'
     compile group: 'org.elasticsearch.plugin', name: 'transport-netty4-client', version: '6.4.1'
+
     compile group: 'org.springframework.shell', name: 'spring-shell-starter', version: '2.0.1.RELEASE'
+
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.7'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.5'
+
+
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
 }

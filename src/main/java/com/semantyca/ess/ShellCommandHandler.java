@@ -1,14 +1,16 @@
 package com.semantyca.ess;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.semantyca.ess.store.Mapping;
+import com.semantyca.ess.store.model.Location;
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
+import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.client.Client;
 import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
@@ -21,6 +23,7 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -34,8 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
-
 @ShellComponent
 public class ShellCommandHandler {
     private static final String TEXT_FORMAT = "%-40s%s%n";
@@ -43,11 +44,51 @@ public class ShellCommandHandler {
     @Autowired
     private Environment env;
 
-
     @Autowired
     private ESClientFactory esClientFactory;
 
     private static final Logger LOG = LoggerFactory.getLogger(ShellCommandHandler.class);
+
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    @Value("${xml.file}")
+    private String xmlFile;
+
+    @ShellMethod("put Mapping into ES")
+    public String mapindex() {
+        CreateIndexRequest request = new CreateIndexRequest("store");
+        try {
+            request.mapping("location", new Mapping().get());
+            CreateIndexResponse createIndexResponse = esClientFactory.get().indices().create(request, RequestOptions.DEFAULT);
+            return createIndexResponse.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    @ShellMethod("put a XML data into ES")
+    public String putxml() {
+        try {
+            XMLReader xmlReader = new XMLReader(xmlFile);
+            List<Location> locations = xmlReader.get();
+            for(Location location: locations){
+                String json = objectMapper.writeValueAsString(location);
+                String id = location.getId();
+                IndexRequest indexRequest = new IndexRequest("store", "location", id)
+                        .source(json, XContentType.JSON);
+                UpdateRequest updateRequest = new UpdateRequest("store", "location", id);
+                updateRequest.doc(json, XContentType.JSON);
+                updateRequest.upsert(indexRequest);
+                esClientFactory.get().update(updateRequest, RequestOptions.DEFAULT);
+                LOG.info(location.toString());
+            }
+
+        } catch (ElasticsearchException | IOException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return "done";
+    }
 
     @ShellMethod("put a data into ES")
     public String putdata() {

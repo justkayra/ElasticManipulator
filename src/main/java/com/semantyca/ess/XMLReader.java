@@ -10,17 +10,16 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StaxReader {
+public class XMLReader {
+    private String xmlFilePath;
 
-    public static void main(String[] args) {
-        List<Location> list = new StaxReader().get();
-        System.out.println(list);
 
+    public XMLReader(String xmlFilePath) {
+        this.xmlFilePath = xmlFilePath;
     }
 
-
     public List<Location> get(){
-        File file = new File("C:\\Users\\kairat.kuliyev\\Downloads\\Projects\\Boots\\storemasterdata\\storemasterdata.xml");
+        File file = new File(xmlFilePath);
         List<Location> locations = new ArrayList<>();
         JAXBContext jaxbContext = null;
         try {
@@ -28,7 +27,10 @@ public class StaxReader {
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             StoreDetails storeDetails = (StoreDetails) jaxbUnmarshaller.unmarshal(file);
 
-            locations = storeDetails.getLocations();
+            for(Location location : storeDetails.getLocations()) {
+                locations.add(location);
+            }
+
         } catch (JAXBException e) {
             e.printStackTrace();
         }

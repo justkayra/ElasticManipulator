@@ -16,9 +16,6 @@ import org.springframework.shell.legacy.LegacyAdapterAutoConfiguration;
         JCommanderParameterResolverAutoConfiguration.class,
         LegacyAdapterAutoConfiguration.class,
         ESClientFactory.class,
- //       StandardAPIAutoConfiguration.class,
- //       StandardCommandsAutoConfiguration.class,
-//        PropertyPlaceholderAutoConfiguration.class,
         ShellCommandHandler.class
 })
 public class ManipulatorStart {

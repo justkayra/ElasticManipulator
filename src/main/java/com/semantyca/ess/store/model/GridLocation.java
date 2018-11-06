@@ -1,9 +1,9 @@
 package com.semantyca.ess.store.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.xml.bind.annotation.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "GridLocation")
@@ -13,7 +13,9 @@ public class GridLocation {
     @XmlElement(name = "PropertyNorthing")
     private long propertyNorthing;
     @XmlElement(name = "Latitude")
+    @JsonIgnore()
     private float latitude;
+    @JsonIgnore()
     @XmlElement(name = "Longitude")
     private float longitude;
 
@@ -48,4 +50,10 @@ public class GridLocation {
     public void setLongitude(float longitude) {
         this.longitude = longitude;
     }
+
+    @JsonGetter
+    public String getLatLong() {
+        return Float.toString(latitude) + "," + Float.toHexString(longitude);
+    }
+
 }
